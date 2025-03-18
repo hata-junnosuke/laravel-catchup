@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RunningRecord;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RunningRecordController extends Controller
 {
@@ -12,7 +13,8 @@ class RunningRecordController extends Controller
      */
     public function index()
     {
-        //
+        $runningRecords = RunningRecord::where('user_id', Auth::user()->id)->get();
+        return view('dashboard', compact('runningRecords'));
     }
 
     /**
@@ -20,7 +22,7 @@ class RunningRecordController extends Controller
      */
     public function create()
     {
-        //
+        return view('running_records.create');
     }
 
     /**
@@ -28,7 +30,8 @@ class RunningRecordController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $runningRecord = RunningRecord::createRunningRecord($request->all());
+        return redirect()->route('dashboard');
     }
 
     /**
