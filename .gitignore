@@ -1,1 +1,23 @@
 docker-config/mariadb
+docker-config/mariadb/*
+
+# データベース関連
+*.sql
+*.sqlite
+
+# 環境設定ファイル
+.env
+.env.*
+!.env.example
+
+# Docker関連
+docker-config/**/data
+*.log
+
+# OS関連
+.DS_Store
+Thumbs.db
+
+# IDE/エディタ関連
+.idea/
+.vscode/
