@@ -13,13 +13,10 @@ class RunningRecord extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function createRunningRecord($data)
+    public static function createRunningRecord($data)
     {
         $runningRecord = new RunningRecord();
-
-        // テスト用でuser_idを固定
-        $runningRecord->user_id = 1;
-        // $runningRecord->user_id = $data['user_id'];
+        $runningRecord->user_id = $data['user_id'];
         $runningRecord->date = $data['date'];
         $runningRecord->distance = $data['distance'];
         $runningRecord->save();

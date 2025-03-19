@@ -13,8 +13,12 @@ class RunningRecordController extends Controller
      */
     public function index()
     {
-        $runningRecords = RunningRecord::where('user_id', Auth::user()->id)->get();
-        return view('dashboard', compact('runningRecords'));
+        $user_id = Auth::user()->id;
+        $runningRecords = RunningRecord::where('user_id', $user_id)->get();
+        // 累計と今月だけで分けたい
+        $totalDistance = $runningRecords->sum('distance');
+        $thisMonthDistance = $runningRecords->where('date', '>=', now()->startOfMonth())->sum('distance');
+        return view('dashboard', compact( 'totalDistance', 'thisMonthDistance'));
     }
 
     /**
@@ -30,6 +34,8 @@ class RunningRecordController extends Controller
      */
     public function store(Request $request)
     {
+        $user_id = Auth::user()->id;
+        $request->merge(['user_id' => $user_id]);
         $runningRecord = RunningRecord::createRunningRecord($request->all());
         return redirect()->route('dashboard');
     }
