@@ -18,7 +18,7 @@ class RunningRecordController extends Controller
         // 累計と今月だけで分けたい
         $totalDistance = $runningRecords->sum('distance');
         $thisMonthDistance = $runningRecords->where('date', '>=', now()->startOfMonth())->sum('distance');
-        return view('dashboard', compact( 'totalDistance', 'thisMonthDistance'));
+        return view('dashboard', compact( 'runningRecords', 'totalDistance', 'thisMonthDistance'));
     }
 
     /**
