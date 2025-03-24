@@ -5,6 +5,13 @@
         </h2>
     </x-slot>
 
+    @php
+        $yearMonth = request('year_month', now()->format('Y/m'));
+        list($currentYear, $currentMonth) = explode('/', $yearMonth);
+        $daysInMonth = \Carbon\Carbon::create($currentYear, $currentMonth)->daysInMonth;
+        $firstDayOfMonth = \Carbon\Carbon::create($currentYear, $currentMonth, 1)->dayOfWeek;
+    @endphp
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <!-- ウェルカムカード -->
@@ -96,20 +103,34 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">ランニングカレンダー</h3>
+                    <div class="flex justify-center mb-4">
+                        <form method="GET" action="{{ route('dashboard') }}">
+                            <select name="year_month" onchange="this.form.submit()">
+                                @for ($y = 2025; $y <= now()->year; $y++)
+                                    @for ($m = 1; $m <= 12; $m++)
+                                        <option value="{{ $y }}/{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}" {{ $y == $currentYear && $m == $currentMonth ? 'selected' : '' }}>
+                                            {{ $y }}/{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}
+                                        </option>
+                                    @endfor
+                                @endfor
+                            </select>
+                        </form>
+                    </div>
                     <div class="grid grid-cols-7 gap-2 text-center">
+                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">日</div>
                         <div class="text-xs font-medium text-gray-500 dark:text-gray-400">月</div>
                         <div class="text-xs font-medium text-gray-500 dark:text-gray-400">火</div>
                         <div class="text-xs font-medium text-gray-500 dark:text-gray-400">水</div>
                         <div class="text-xs font-medium text-gray-500 dark:text-gray-400">木</div>
                         <div class="text-xs font-medium text-gray-500 dark:text-gray-400">金</div>
                         <div class="text-xs font-medium text-gray-500 dark:text-gray-400">土</div>
-                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">日</div>
-                        
-                        @for ($i = 1; $i <= 31; $i++)
+
+                        @for ($day = 1; $day <= $daysInMonth; $day++)
                             <div class="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-sm mx-auto">
-                                {{ $i }}
+                                <a href="{{ route('running_records.create', ['date' => \Carbon\Carbon::create($currentYear, $currentMonth, $day)->toDateString()]) }}">
+                                    {{ $day }}
+                                </a>
                             </div>
-                            @if ($i >= 31) @break @endif
                         @endfor
                     </div>
                     <div class="flex justify-center mt-4 space-x-4 text-sm">

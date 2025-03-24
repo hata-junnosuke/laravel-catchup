@@ -9,13 +9,13 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <form method="POST" action="{{ route('running_records.store') ?? '#' }}" class="space-y-6">
+                    <form method="POST" action="{{ route('running_records.store') }}" class="space-y-6">
                         @csrf
 
                         <!-- 日付 -->
                         <div>
                             <x-input-label for="date" :value="__('日付')" />
-                            <x-text-input id="date" class="block mt-1 w-full" type="date" name="date" :value="old('date', date('Y-m-d'))" required autofocus />
+                            <x-text-input id="date" class="block mt-1 w-full" type="date" name="date" :value="old('date', $date)" required autofocus />
                             <x-input-error :messages="$errors->get('date')" class="mt-2" />
                         </div>
 

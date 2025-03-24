@@ -12,23 +12,28 @@ class RunningRecordController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $yearMonth = $request->input('year_month', now()->format('Y/m'));
+        list($currentYear, $currentMonth) = explode('/', $yearMonth);
+
         $user_id = Auth::user()->id;
         $runningRecords = RunningRecord::where('user_id', $user_id)->get();
-        // 累計と今月だけで分けたい
         $totalDistance = $runningRecords->sum('distance');
-        $thisMonthDistance = $runningRecords->where('date', '>=', now()->startOfMonth())->sum('distance');
+        $thisMonthDistance = $runningRecords->where('date', '>=', \Carbon\Carbon::create($currentYear, $currentMonth)->startOfMonth())
+                                            ->where('date', '<=', \Carbon\Carbon::create($currentYear, $currentMonth)->endOfMonth())
+                                            ->sum('distance');
 
-        return view('dashboard', compact('runningRecords', 'totalDistance', 'thisMonthDistance'));
+        return view('dashboard', compact('runningRecords', 'totalDistance', 'thisMonthDistance', 'currentYear', 'currentMonth'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        return view('running_records.create');
+        $date = $request->input('date', now()->toDateString());
+        return view('running_records.create', compact('date'));
     }
 
     /**

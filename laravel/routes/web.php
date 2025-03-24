@@ -3,15 +3,16 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RunningRecordController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
+Route::get('/dashboard', function (Request $request) {
     $controller = new RunningRecordController;
 
-    return $controller->index();
+    return $controller->index($request);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
