@@ -15,16 +15,25 @@ class RunningRecordController extends Controller
     public function index(Request $request)
     {
         $yearMonth = $request->input('year_month', now()->format('Y/m'));
-        list($currentYear, $currentMonth) = explode('/', $yearMonth);
+        list($selectedYear, $selectedMonth) = explode('/', $yearMonth);
 
         $user_id = Auth::user()->id;
         $runningRecords = RunningRecord::where('user_id', $user_id)->get();
         $totalDistance = $runningRecords->sum('distance');
-        $thisMonthDistance = $runningRecords->where('date', '>=', \Carbon\Carbon::create($currentYear, $currentMonth)->startOfMonth())
-                                            ->where('date', '<=', \Carbon\Carbon::create($currentYear, $currentMonth)->endOfMonth())
+
+        // 選択された月の情報を取得
+        $selectedMonthDistance = $runningRecords->where('date', '>=', \Carbon\Carbon::create($selectedYear, $selectedMonth)->startOfMonth())
+                                                ->where('date', '<=', \Carbon\Carbon::create($selectedYear, $selectedMonth)->endOfMonth())
+                                                ->sum('distance');
+
+        // 現在の月の情報を取得
+        $currentYearNow = now()->year;
+        $currentMonthNow = now()->month;
+        $thisMonthDistance = $runningRecords->where('date', '>=', \Carbon\Carbon::create($currentYearNow, $currentMonthNow)->startOfMonth())
+                                            ->where('date', '<=', \Carbon\Carbon::create($currentYearNow, $currentMonthNow)->endOfMonth())
                                             ->sum('distance');
 
-        return view('dashboard', compact('runningRecords', 'totalDistance', 'thisMonthDistance', 'currentYear', 'currentMonth'));
+        return view('dashboard', compact('runningRecords', 'totalDistance', 'selectedMonthDistance', 'thisMonthDistance', 'selectedYear', 'selectedMonth'));
     }
 
     /**

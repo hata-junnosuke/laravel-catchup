@@ -7,9 +7,9 @@
 
     @php
         $yearMonth = request('year_month', now()->format('Y/m'));
-        list($currentYear, $currentMonth) = explode('/', $yearMonth);
-        $daysInMonth = \Carbon\Carbon::create($currentYear, $currentMonth)->daysInMonth;
-        $firstDayOfMonth = \Carbon\Carbon::create($currentYear, $currentMonth, 1)->dayOfWeek;
+        list($selectedYear, $selectedMonth) = explode('/', $yearMonth);
+        $daysInMonth = \Carbon\Carbon::create($selectedYear, $selectedMonth)->daysInMonth;
+        $firstDayOfMonth = \Carbon\Carbon::create($selectedYear, $selectedMonth, 1)->dayOfWeek;
     @endphp
 
     <div class="py-12">
@@ -27,6 +27,17 @@
 
             <!-- 統計カード -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">選択された月の走行距離</h3>
+                        <p class="text-3xl font-bold text-blue-600 dark:text-blue-400"> {{ $selectedMonthDistance }} km</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">目標: 50.0 km</p>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                            <div class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">今月の走行距離</h3>
@@ -48,14 +59,54 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">平均ペース</h3>
-                        <p class="text-3xl font-bold text-purple-600 dark:text-purple-400">-- 分/km</p>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">最近の5回の平均</p>
-                        <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                            <div class="bg-purple-600 h-2.5 rounded-full" style="width: 0%"></div>
+            <!-- カレンダー -->
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">ランニングカレンダー</h3>
+                    <div class="flex justify-center mb-4">
+                        <form method="GET" action="{{ route('dashboard') }}">
+                            <select name="year_month" onchange="this.form.submit()">
+                                @for ($y = 2025; $y <= now()->year; $y++)
+                                    @for ($m = 1; $m <= 12; $m++)
+                                        <option value="{{ $y }}/{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}" {{ $y == $selectedYear && $m == $selectedMonth ? 'selected' : '' }}>
+                                            {{ $y }}/{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}
+                                        </option>
+                                    @endfor
+                                @endfor
+                            </select>
+                        </form>
+                    </div>
+                    <div class="grid grid-cols-7 gap-2 text-center">
+                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">日</div>
+                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">月</div>
+                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">火</div>
+                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">水</div>
+                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">木</div>
+                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">金</div>
+                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">土</div>
+
+                        @for ($day = 1; $day <= $daysInMonth; $day++)
+                            <div class="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-sm mx-auto">
+                                <a href="{{ route('running_records.create', ['date' => \Carbon\Carbon::create($selectedYear, $selectedMonth, $day)->toDateString()]) }}">
+                                    {{ $day }}
+                                </a>
+                            </div>
+                        @endfor
+                    </div>
+                    <div class="flex justify-center mt-4 space-x-4 text-sm">
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 rounded-full bg-blue-500 mr-2"></div>
+                            <span class="text-gray-600 dark:text-gray-300">1-5km</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 rounded-full bg-green-500 mr-2"></div>
+                            <span class="text-gray-600 dark:text-gray-300">5-10km</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 rounded-full bg-purple-500 mr-2"></div>
+                            <span class="text-gray-600 dark:text-gray-300">10km以上</span>
                         </div>
                     </div>
                 </div>
@@ -95,57 +146,6 @@
                                 @endif
                             </tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- カレンダー -->
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">ランニングカレンダー</h3>
-                    <div class="flex justify-center mb-4">
-                        <form method="GET" action="{{ route('dashboard') }}">
-                            <select name="year_month" onchange="this.form.submit()">
-                                @for ($y = 2025; $y <= now()->year; $y++)
-                                    @for ($m = 1; $m <= 12; $m++)
-                                        <option value="{{ $y }}/{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}" {{ $y == $currentYear && $m == $currentMonth ? 'selected' : '' }}>
-                                            {{ $y }}/{{ str_pad($m, 2, '0', STR_PAD_LEFT) }}
-                                        </option>
-                                    @endfor
-                                @endfor
-                            </select>
-                        </form>
-                    </div>
-                    <div class="grid grid-cols-7 gap-2 text-center">
-                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">日</div>
-                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">月</div>
-                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">火</div>
-                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">水</div>
-                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">木</div>
-                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">金</div>
-                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">土</div>
-
-                        @for ($day = 1; $day <= $daysInMonth; $day++)
-                            <div class="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-sm mx-auto">
-                                <a href="{{ route('running_records.create', ['date' => \Carbon\Carbon::create($currentYear, $currentMonth, $day)->toDateString()]) }}">
-                                    {{ $day }}
-                                </a>
-                            </div>
-                        @endfor
-                    </div>
-                    <div class="flex justify-center mt-4 space-x-4 text-sm">
-                        <div class="flex items-center">
-                            <div class="w-4 h-4 rounded-full bg-blue-500 mr-2"></div>
-                            <span class="text-gray-600 dark:text-gray-300">1-5km</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-4 h-4 rounded-full bg-green-500 mr-2"></div>
-                            <span class="text-gray-600 dark:text-gray-300">5-10km</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-4 h-4 rounded-full bg-purple-500 mr-2"></div>
-                            <span class="text-gray-600 dark:text-gray-300">10km以上</span>
-                        </div>
                     </div>
                 </div>
             </div>
