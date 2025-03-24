@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RunningRecordController;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');

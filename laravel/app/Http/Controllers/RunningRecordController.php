@@ -15,7 +15,7 @@ class RunningRecordController extends Controller
     public function index(Request $request)
     {
         $yearMonth = $request->input('year_month', now()->format('Y/m'));
-        list($selectedYear, $selectedMonth) = explode('/', $yearMonth);
+        [$selectedYear, $selectedMonth] = explode('/', $yearMonth);
 
         $user_id = Auth::user()->id;
         $runningRecords = RunningRecord::where('user_id', $user_id)->get();
@@ -23,15 +23,15 @@ class RunningRecordController extends Controller
 
         // 選択された月の情報を取得
         $selectedMonthDistance = $runningRecords->where('date', '>=', \Carbon\Carbon::create($selectedYear, $selectedMonth)->startOfMonth())
-                                                ->where('date', '<=', \Carbon\Carbon::create($selectedYear, $selectedMonth)->endOfMonth())
-                                                ->sum('distance');
+            ->where('date', '<=', \Carbon\Carbon::create($selectedYear, $selectedMonth)->endOfMonth())
+            ->sum('distance');
 
         // 現在の月の情報を取得
         $currentYearNow = now()->year;
         $currentMonthNow = now()->month;
         $thisMonthDistance = $runningRecords->where('date', '>=', \Carbon\Carbon::create($currentYearNow, $currentMonthNow)->startOfMonth())
-                                            ->where('date', '<=', \Carbon\Carbon::create($currentYearNow, $currentMonthNow)->endOfMonth())
-                                            ->sum('distance');
+            ->where('date', '<=', \Carbon\Carbon::create($currentYearNow, $currentMonthNow)->endOfMonth())
+            ->sum('distance');
 
         return view('dashboard', compact('runningRecords', 'totalDistance', 'selectedMonthDistance', 'thisMonthDistance', 'selectedYear', 'selectedMonth'));
     }
@@ -42,6 +42,7 @@ class RunningRecordController extends Controller
     public function create(Request $request)
     {
         $date = $request->input('date', now()->toDateString());
+
         return view('running_records.create', compact('date'));
     }
 
