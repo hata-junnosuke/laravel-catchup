@@ -87,6 +87,12 @@
                         <div class="text-xs font-medium text-gray-500 dark:text-gray-400">金</div>
                         <div class="text-xs font-medium text-gray-500 dark:text-gray-400">土</div>
 
+                        <!-- 月初の空白を表示 -->
+                        @for ($i = 0; $i < $firstDayOfMonth; $i++)
+                            <div class="h-10 w-10"></div>
+                        @endfor
+
+                        <!-- 月の日付を表示 --> 
                         @for ($day = 1; $day <= $daysInMonth; $day++)
                             <div class="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-sm mx-auto">
                                 <a href="{{ route('running_records.create', ['date' => \Carbon\Carbon::create($selectedYear, $selectedMonth, $day)->toDateString()]) }}">
