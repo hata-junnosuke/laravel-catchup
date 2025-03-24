@@ -6,9 +6,12 @@ use App\Http\Requests\StoreRunningRecordRequest;
 use App\Models\RunningRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class RunningRecordController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
@@ -71,7 +74,9 @@ class RunningRecordController extends Controller
      */
     public function edit(RunningRecord $runningRecord)
     {
-        //
+        $this->authorize('update', $runningRecord);
+
+        return view('running_records.edit', compact('runningRecord'));
     }
 
     /**
@@ -79,7 +84,11 @@ class RunningRecordController extends Controller
      */
     public function update(Request $request, RunningRecord $runningRecord)
     {
-        //
+        $this->authorize('update', $runningRecord);
+
+        $runningRecord->update($request->all());
+
+        return redirect()->route('dashboard');
     }
 
     /**
