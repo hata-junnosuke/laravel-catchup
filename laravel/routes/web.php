@@ -9,7 +9,8 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    $controller = new RunningRecordController();
+    $controller = new RunningRecordController;
+
     return $controller->index();
 })->middleware(['auth', 'verified'])->name('dashboard');
 

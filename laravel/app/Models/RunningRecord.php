@@ -15,11 +15,12 @@ class RunningRecord extends Model
 
     public static function createRunningRecord($data)
     {
-        $runningRecord = new RunningRecord();
+        $runningRecord = new RunningRecord;
         $runningRecord->user_id = $data['user_id'];
         $runningRecord->date = $data['date'];
         $runningRecord->distance = $data['distance'];
         $runningRecord->save();
+
         return $runningRecord;
     }
 }

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreRunningRecordRequest;
 use App\Models\RunningRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\StoreRunningRecordRequest;
 
 class RunningRecordController extends Controller
 {
@@ -19,7 +19,8 @@ class RunningRecordController extends Controller
         // 累計と今月だけで分けたい
         $totalDistance = $runningRecords->sum('distance');
         $thisMonthDistance = $runningRecords->where('date', '>=', now()->startOfMonth())->sum('distance');
-        return view('dashboard', compact( 'runningRecords', 'totalDistance', 'thisMonthDistance'));
+
+        return view('dashboard', compact('runningRecords', 'totalDistance', 'thisMonthDistance'));
     }
 
     /**
@@ -38,6 +39,7 @@ class RunningRecordController extends Controller
         $user_id = Auth::user()->id;
         $request->merge(['user_id' => $user_id]);
         $runningRecord = RunningRecord::createRunningRecord($request->all());
+
         return redirect()->route('dashboard');
     }
 

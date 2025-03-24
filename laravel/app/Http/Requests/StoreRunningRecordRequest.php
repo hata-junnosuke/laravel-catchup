@@ -38,4 +38,4 @@ class StoreRunningRecordRequest extends FormRequest
             'distance.min' => '距離は0以上で入力してください。',
         ];
     }
-} 
+}
