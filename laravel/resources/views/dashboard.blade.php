@@ -150,7 +150,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $runningRecord->distance }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <a href="{{ route('running_records.edit', $runningRecord->id) }}" class="text-indigo-600 hover:text-indigo-900">編集</a>
-                                        <form action="{{ route('running_records.destroy', $runningRecord->id) }}" method="POST" style="display:inline;">
+                                        <form action="{{ route('running_records.destroy', $runningRecord->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('本当に削除しますか？');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-900 ml-4">削除</button>

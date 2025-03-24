@@ -96,6 +96,10 @@ class RunningRecordController extends Controller
      */
     public function destroy(RunningRecord $runningRecord)
     {
-        //
+        $this->authorize('update', $runningRecord);
+
+        $runningRecord->delete();
+
+        return redirect()->route('dashboard');
     }
 }
