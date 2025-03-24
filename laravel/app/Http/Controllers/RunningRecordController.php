@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\RunningRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StoreRunningRecordRequest;
 
 class RunningRecordController extends Controller
 {
@@ -32,7 +33,7 @@ class RunningRecordController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreRunningRecordRequest $request)
     {
         $user_id = Auth::user()->id;
         $request->merge(['user_id' => $user_id]);
