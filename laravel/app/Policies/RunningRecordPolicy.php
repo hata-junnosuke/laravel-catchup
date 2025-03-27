@@ -17,4 +17,4 @@ class RunningRecordPolicy
     {
         return $user->id === $runningRecord->user_id;
     }
-} 
+}
